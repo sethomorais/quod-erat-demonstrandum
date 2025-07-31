@@ -1,1 +1,0 @@
-# quod_erat_demonstrandum
