@@ -11,6 +11,7 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     html, body {
       height: 100%;
       width: 100%;
@@ -19,11 +20,12 @@
       color: #4a4a4a;
       overflow-x: hidden;
     }
+
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 10px 80px; /* espaço extra p/ botões */
+      padding: 20px 10px 80px;
     }
 
     .book {
@@ -87,6 +89,37 @@
       width: 100%;
       height: 250px;
       border-radius: 8px;
+    }
+
+    .poem {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .poem::-webkit-scrollbar {
+      width: 6px;
+    }
+    .poem::-webkit-scrollbar-thumb {
+      background: #caa;
+      border-radius: 3px;
+    }
+
+    .error-page {
+      text-align: center;
+      font-family: monospace;
+      padding: 50px 20px;
+    }
+
+    .error-page h1 {
+      font-size: 3em;
+      color: #cc0000;
+      margin-bottom: 20px;
+    }
+
+    .error-page p {
+      font-size: 1.2em;
+      color: #555;
     }
 
     @keyframes fade {
@@ -157,6 +190,14 @@
         <iframe src="https://www.youtube.com/embed/dQ4ZkXKLe84" allowfullscreen></iframe>
       </div>
     </div>
+
+    <!-- Página 4 (Erro 404) -->
+    <div class="page">
+      <div class="error-page">
+        <h1>Error 404</h1>
+        <p>Sin conexión a internet... intenta nuevamente más tarde.</p>
+      </div>
+    </div>
   </div>
 
   <div class="controls">
@@ -174,7 +215,72 @@
       if (current < 0) current = 0;
       if (current >= pages.length) current = pages.length - 1;
       pages[current].classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // sobe pro topo da página nova
+
+      // Se for a última página (erro 404), inicia pop-ups
+      if (current === pages.length - 1) {
+        setTimeout(showPopups, 1500);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const lyrics = [
+      "My soul aches for you",
+      "You belong with me",
+      "Yeah, I was made for you",
+      "And you were made for me"
+    ];
+
+    let popupIndex = 0;
+
+    function showPopups() {
+      if (popupIndex >= lyrics.length) {
+        crashSite();
+        return;
+      }
+
+      let popup = document.createElement("div");
+      popup.style.position = "fixed";
+      popup.style.top = "30%";
+      popup.style.left = "50%";
+      popup.style.transform = "translate(-50%, -50%)";
+      popup.style.background = "#c0c0c0";
+      popup.style.color = "#000";
+      popup.style.border = "2px solid #000";
+      popup.style.padding = "20px";
+      popup.style.width = "300px";
+      popup.style.boxShadow = "5px 5px #888";
+      popup.style.zIndex = 9999;
+      popup.style.fontFamily = "monospace";
+
+      let title = document.createElement("h3");
+      title.innerText = "Te quiero";
+      title.style.marginBottom = "10px";
+      popup.appendChild(title);
+
+      let text = document.createElement("p");
+      text.innerText = lyrics[popupIndex];
+      popup.appendChild(text);
+
+      let btn = document.createElement("button");
+      btn.innerText = "OK";
+      btn.style.marginTop = "15px";
+      btn.onclick = () => {
+        document.body.removeChild(popup);
+        popupIndex++;
+        showPopups();
+      };
+      popup.appendChild(btn);
+
+      document.body.appendChild(popup);
+    }
+
+    function crashSite() {
+      document.body.innerHTML = ""; // Limpa tudo
+      document.body.style.background = "#000";
+      let glitch = document.createElement("div");
+      glitch.innerHTML = "<h1 style='color: red; text-align:center; margin-top:40vh; font-family:monospace;'>SYSTEM FAILURE</h1>";
+      document.body.appendChild(glitch);
     }
   </script>
 </body>
