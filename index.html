@@ -23,7 +23,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 10px 80px; /* espaço extra p/ botões */
+      padding: 20px 10px 80px;
     }
 
     .book {
@@ -42,6 +42,8 @@
       flex-direction: column;
       justify-content: space-between;
       animation: fade 0.5s ease-in-out;
+      overflow-y: auto;
+      max-height: 80vh;
     }
 
     .page.active {
@@ -103,11 +105,50 @@
         height: 200px;
       }
     }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      border: 2px solid #ff0000;
+      padding: 2rem;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 0 10px #ff0000;
+      display: none;
+      z-index: 1000;
+      color: white;
+    }
+    .modal h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: #ff0000;
+    }
+    .modal button {
+      background: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+    }
+
+    .glitch {
+      animation: glitch 0.3s infinite;
+    }
+    @keyframes glitch {
+      0%   { transform: translate(0); }
+      20%  { transform: translate(-5px, 5px); }
+      40%  { transform: translate(5px, -5px); }
+      60%  { transform: translate(-5px, -5px); }
+      80%  { transform: translate(5px, 5px); }
+      100% { transform: translate(0); }
+    }
   </style>
 </head>
 <body>
   <div class="book">
-    <!-- Página 1 -->
     <div class="page active">
       <div>
         <h1>Con amor, Seth</h1>
@@ -118,7 +159,6 @@
       </div>
     </div>
 
-    <!-- Página 2 -->
     <div class="page">
       <div class="poem">
         <h2>Me Di Cuenta</h2>
@@ -145,7 +185,6 @@
       </div>
     </div>
 
-    <!-- Página 3 -->
     <div class="page">
       <div class="final-message">
         <h2>Simplemente Tú</h2>
@@ -157,11 +196,25 @@
         <iframe src="https://www.youtube.com/embed/dQ4ZkXKLe84" allowfullscreen></iframe>
       </div>
     </div>
+
+    <!-- Página 4: Error 404 com pop-ups -->
+    <div class="page">
+      <div style="text-align:center; margin-top: 20vh;">
+        <h1 style="font-size: 3em; color: #ff0000;">Error 404</h1>
+        <p style="font-size: 1.5em;">No Internet Connection</p>
+      </div>
+    </div>
   </div>
 
   <div class="controls">
     <button onclick="changePage(-1)">⟵</button>
     <button onclick="changePage(1)">⟶</button>
+  </div>
+
+  <div class="modal" id="popup">
+    <h2>Te quiero</h2>
+    <p id="lyric"></p>
+    <button id="okBtn">Ok</button>
   </div>
 
   <script>
@@ -174,7 +227,46 @@
       if (current < 0) current = 0;
       if (current >= pages.length) current = pages.length - 1;
       pages[current].classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // sobe pro topo da página nova
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (current === 3) {
+        setTimeout(showPopup, 800);
+      }
+    }
+
+    // POP-UP MUSIC ERROR SIMULATION
+    const lyrics = [
+      "My soul aches for you",
+      "You belong with me",
+      "Yeah, I was made for you",
+      "And you were made for me"
+    ];
+    let index = 0;
+    const popup = document.getElementById('popup');
+    const lyricEl = document.getElementById('lyric');
+    const okBtn = document.getElementById('okBtn');
+
+    function showPopup() {
+      lyricEl.textContent = lyrics[index];
+      popup.style.display = 'block';
+    }
+
+    function closePopup() {
+      popup.style.display = 'none';
+      index++;
+      if (index < lyrics.length) {
+        setTimeout(showPopup, 300);
+      } else {
+        crashSite();
+      }
+    }
+
+    okBtn.addEventListener('click', closePopup);
+
+    function crashSite() {
+      document.body.classList.add('glitch');
+      setTimeout(() => {
+        document.body.innerHTML = '<h1 style="color:#ff0000;text-align:center;margin-top:40vh;">Fatal Error: Connection Terminated</h1>';
+      }, 600);
     }
   </script>
 </body>
